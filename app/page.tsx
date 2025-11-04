@@ -227,10 +227,7 @@ export default function HomePage() {
   const generateApplication = async () => {
     setLoading(true)
     try {
-      const formData = new FormData()
-      formData.append(
-        'message',
-        `Process and validate pool permit application with the following data:
+      const message = `Process and validate pool permit application with the following data:
 Property Information:
 - Address: ${property.address}
 - Lot Size: ${property.lotSize} acres
@@ -246,16 +243,30 @@ Pool Specifications:
 - Diving Board: ${pool.divingBoard ? 'Yes' : 'No'}
 - Fence: ${pool.fence ? 'Yes' : 'No'}
 
-Documents Uploaded: ${documents.map((d) => d.type).join(', ')}
+Documents Uploaded: ${documents.length > 0 ? documents.map((d) => d.type).join(', ') : 'None'}
 
-Please validate all requirements, check document completeness, and generate a structured permit application response.`
-      )
-
-      formData.append('agent_id', '68fd263d71c6b27d6c8eb80f')
+Please validate all requirements, check document completeness, and generate a structured permit application response in JSON format with the following structure:
+{
+  "result": {
+    "validation_status": "complete" or "incomplete",
+    "validation_checklist": [{"item": "...", "status": "pass" or "fail", "details": "..."}],
+    "property_summary": {...},
+    "pool_summary": {...},
+    "document_status": {...},
+    "missing_items": [...],
+    "compliance_notes": [...]
+  }
+}`
 
       const response = await fetch('/api/agent', {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message,
+          agent_id: '68fd263d71c6b27d6c8eb80f',
+        }),
       })
 
       const data = await response.json()
@@ -266,7 +277,7 @@ Please validate all requirements, check document completeness, and generate a st
         setScreen('results')
       } else {
         console.error('Failed to generate application:', data)
-        alert('Error generating application. Please try again.')
+        alert(`Error: ${data.error || 'Failed to generate application. Please try again.'}`)
       }
     } catch (error) {
       console.error('Error:', error)
