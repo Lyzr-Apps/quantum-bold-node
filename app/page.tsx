@@ -200,7 +200,7 @@ export default function HomePage() {
           (pool.heating ? pool.heatingType : true)
         )
       case 'documents':
-        return documents.length >= 2
+        return true
       case 'review':
         return true
       default:
@@ -633,7 +633,7 @@ Please validate all requirements, check document completeness, and generate a st
                   <File className="w-6 h-6 text-blue-600" />
                   Supporting Documents
                 </CardTitle>
-                <CardDescription>Upload required documentation (PDF or image files, max 10MB each)</CardDescription>
+                <CardDescription>Upload supporting documentation (PDF or image files, max 10MB each) - Optional</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 {['Property Deed', 'Site Plan', 'Pool Design'].map((docType) => {
@@ -697,16 +697,6 @@ Please validate all requirements, check document completeness, and generate a st
                     </div>
                   )
                 })}
-
-                {documents.length > 0 && documents.length < 3 && (
-                  <Alert className="border-yellow-200 bg-yellow-50">
-                    <AlertCircle className="text-yellow-600 h-4 w-4" />
-                    <AlertTitle className="text-yellow-800">Missing Documents</AlertTitle>
-                    <AlertDescription className="text-yellow-700">
-                      You have uploaded {documents.length} of 3 required documents. Please upload all documents to proceed.
-                    </AlertDescription>
-                  </Alert>
-                )}
               </CardContent>
             </Card>
           )}
